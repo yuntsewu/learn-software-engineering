@@ -1,0 +1,81 @@
+Given a nested list of int array – calculate the sum of all the integers, while multiplying each number by its depth…
+
+For example:
+
+Here’s the depth sum of the nested list {1, {2, 3}}:
+
+{1, {2, 3}} => 1*1 + 2*2 + 3*2 = 11
+
+Here’s the depth sum of the nested list {1, {2, {3}}}:
+
+{1, {2, {3}}} =>  1*1 + 2*2 + 3*3 = 14
+
+First, lets define the data structure:
+
+        public class NestedList
+        {
+            public NestedList(int val)
+            {
+                this.Val = val;
+            }
+
+            public int Val { private set; get; }
+            public List<NestedList> nl;
+        }
+
+
+
+Here’s the test for {1, {2, {3, 4}}} =>  1*1 + 2*2 + 3*3 + 4*3 = 26
+
+           var root = new NestedList(1);
+            var i2 = new NestedList(2);
+            var i3 = new NestedList(3);
+            var i4 = new NestedList(4);
+
+            root.nl = new List<NestedList> {i2};
+            var list = new List<NestedList>();
+            list.Add(i3);
+            list.Add(i4);
+            i2.nl = list;
+
+            var results = root.DepthSum();
+            Debug.Assert(results == 26);
+ 
+
+Here’s the implementation
+
+        public class NestedList
+        {
+            public NestedList(int val)
+            {
+                this.Val = val;
+            }
+
+            public int Val { private set; get; }
+            public List<NestedList> nl;
+
+            public bool IsNestedList()
+            {
+                return nl != null;
+            }
+
+            public int DepthSum()
+            {
+                return Calc(this, 1);
+            }
+
+            private static int Calc(NestedList nestedList, int dept)
+            {
+                int total = nestedList.Val * dept;
+                if (nestedList.IsNestedList())
+                {
+                    int newDept = ++dept;
+                    foreach (NestedList childNestedList in nestedList.nl)
+                    {
+                        total += Calc(childNestedList, newDept);
+                    }
+                }
+                return total;
+            }
+        }
+
